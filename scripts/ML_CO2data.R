@@ -1,49 +1,35 @@
 # Script to read, tidy, and save Mauna Loa CO2 data
-# Authors:
+# Authors: Kaitlynn, Ava, Brittney
 # Created: 2023-04-24
-# Updated: xxxx-xx-xx
+# Updated: 2023-06-05
 
 # --------------------------------------------------
 # packages
 
-
+library(readr)
+library(tidyverse)
 
 # --------------------------------------------------
 # read the Mauna Loa data from the web
 
-# x-----INSTRUCTIONS FOR THIS SECTION-----x
-# Delete the instructions when you are done
-# Use the code we developed in class to read
-# the Mauna Loa CO2 data from the web (from
-# "readingwritingworksheet.Rmd" in the repo
-# STT2860manipulation. Use the version that
-# specifies the column types and replaces 
-# all of the NA values with R's NA symbol.
-# x---------------------------------------x
-
-PUT YOUR CODE HERE!
+mlco2 <- read_table(file = "https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.txt",
+                    comment = "#",
+                    col_names = c("year", "month", "dec_date", "co2", "co2_adj", "num_days", "sd_days",                                  "uncertainty"),
+                    col_types = "iinnninn",
+                    na = c("-1", "-9.99", "-0.99"))
 
 # --------------------------------------------------
 # Format, tidy, and reshape the dataset
 
-# x-----INSTRUCTIONS FOR THIS SECTION-----x
-# Delete the instructions when you are done
-# Create a new variable that unites data in
-# the year and month columns in the format
-# year-month. Pivot the data so that both
-# CO2 measurements are in the same column.
-# x---------------------------------------x
-
-PUT YOUR CODE HERE!
+tidy_mlco2 <- mlco2 %>%
+  mutate(year_month = paste(year, month, sep = "-")) %>%
+  pivot_longer(cols = c("co2", "co2_adj"),
+               names_to = "CO2",
+               values_to = "co2_amount") %>%
+  select(-c(year, month))
 
 # --------------------------------------------------
 # save the tidied data as .rds to data_tidy
 
-# x-----INSTRUCTIONS FOR THIS SECTION-----x
-# Delete the instructions when you are done
-# Save the dataset as an .rds file into the
-# data_tidy folder.
-# x---------------------------------------x
-
-PUT YOUR CODE HERE!
+save(tidy_mlco2, file = "~/git_repos/STT2860S23project2/data_tidy/mlco2_tidy.rds")
 
